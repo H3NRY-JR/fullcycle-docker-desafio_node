@@ -1,28 +1,11 @@
 const url = "http://localhost:3000";
 
-async function populateAllPeopleList() {
-  const people = await getAllPeople();
-  populatePeopleList(people);
-}
-
-async function getAllPeople() {
-  return (await fetch(`${url}/people`)).json();
-}
-
-function populatePeopleList(people) {
-  const peopleListComponent = document.getElementById("people");
-
-  people?.forEach((person) => {
-    const listItem = document.createElement("li");
-    listItem.textContent = person.name;
-    peopleListComponent.appendChild(listItem);
-  });
-}
+createPersonAndGetPeopleOnPageLoad();
 
 function createPersonAndGetPeopleOnPageLoad() {
   document.addEventListener("DOMContentLoaded", async () => {
     await postCreatePerson();
-    await getPeopleAfterCreatingPerson();
+    await populateAllPeopleList();
   });
 }
 
@@ -37,8 +20,24 @@ async function postCreatePerson() {
     .catch((error) => console.error("Erro:", error));
 }
 
-function getPeopleAfterCreatingPerson() {
-  document.addEventListener("DOMContentLoaded", populateAllPeopleList());
+async function populateAllPeopleList() {
+  const people = await getAllPeople();
+  populatePeopleList(people);
 }
 
-createPersonAndGetPeopleOnPageLoad();
+async function getAllPeople() {
+  return (await fetch(`${url}/people`)).json();
+}
+
+function populatePeopleList(people) {
+  const peopleListComponent = document.getElementById("people");
+
+  people?.forEach((person) => addPersonListItem(person, peopleListComponent));
+    
+}
+
+function addPersonListItem(person, peopleListComponent){
+  const listItem = document.createElement("li");
+  listItem.textContent = person.name;
+  peopleListComponent.appendChild(listItem);
+};
