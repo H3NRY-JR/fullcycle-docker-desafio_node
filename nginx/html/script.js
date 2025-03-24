@@ -20,10 +20,10 @@ function populatePeopleList(people) {
 }
 
 function createPersonAndGetPeopleOnPageLoad() {
-  document.addEventListener(
-    "DOMContentLoaded",
-    postCreatePerson().then(getPeopleAfterCreatingPerson)
-  );
+  document.addEventListener("DOMContentLoaded", async () => {
+    await postCreatePerson();
+    await getPeopleAfterCreatingPerson();
+  });
 }
 
 async function postCreatePerson() {
