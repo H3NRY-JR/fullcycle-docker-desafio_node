@@ -1,0 +1,55 @@
+services:
+  server:
+    image: nginx:stable-alpine-perl
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/html:/usr/share/nginx/html
+    restart: always
+    depends_on:
+      node:
+        condition: service_healthy
+
+  node:
+    build:
+      context: ./node
+    environment:
+      NODE_ENV: production
+    ports:
+      - 3000:3000
+    expose:
+      - 3000
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "localhost:3000/health"]
+      interval: 10s
+      retries: 3
+      timeout: 10s
+      start_period: 5s
+
+  db:
+    image: mysql:latest
+    restart: always
+    volumes:
+      - mysql_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: userpassword
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql_data:
+
+
