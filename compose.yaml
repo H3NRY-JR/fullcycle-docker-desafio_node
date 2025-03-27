@@ -28,7 +28,8 @@ services:
       retries: 3
       timeout: 10s
       start_period: 5s
-
+    volumes:
+      - ./node/src:/src
   db:
     image: mysql:latest
     restart: always
